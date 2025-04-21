@@ -73,7 +73,7 @@ uint8_t bitbang_uart_rx(void) {
     return byte;
 }
 
-void app_main(void) {
+void main(void) {
     // Configure GPIO pins
     gpio_reset_pin(TX_PIN);
     gpio_reset_pin(RX_PIN);
