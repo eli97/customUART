@@ -15,10 +15,8 @@ static const char *TAG = "BITBANG_UART";
 
 // Function to transmit a byte using bit-banging
 void bitbang_uart_tx(uint8_t byte) {
-    // Configure TX pin as output
-    gpio_set_direction(TX_PIN, GPIO_MODE_OUTPUT);
-    // Start bit (low)
-    gpio_set_level(TX_PIN, 0);
+    gpio_set_direction(TX_PIN, GPIO_MODE_OUTPUT); // Configure TX pin as output
+    gpio_set_level(TX_PIN, 0); // Start bit (low)
     esp_rom_delay_us(BIT_TIME_US);
 
     // Send 8 data bits, LSB first
@@ -40,14 +38,14 @@ uint8_t bitbang_uart_rx(void) {
 
     // Wait for start bit (low)
     while (gpio_get_level(RX_PIN) == 1) {
-        //vTaskDelay(1 / portTICK_PERIOD_MS);  // Avoid busy-waiting too hard
+        vTaskDelay(1 / portTICK_PERIOD_MS);  // Avoid busy-waiting too hard
     }
 
     // Delay to the middle of the start bit
     esp_rom_delay_us(BIT_TIME_US / 2);
     // Confirm start bit
     if (gpio_get_level(RX_PIN) != 0) {
-      //ESP_LOGE(TAG, "Invalid start bit");
+      ESP_LOGE(TAG, "Invalid start bit");
         return 0;
     }
 
@@ -63,7 +61,7 @@ uint8_t bitbang_uart_rx(void) {
 
     // Check stop bit (high)
     if (gpio_get_level(RX_PIN) != 1) {
-       // ESP_LOG(TAG, "Invalid stop bit");
+       ESP_LOGE(TAG, "Invalid stop bit");
         return 0;
     }
 
@@ -85,7 +83,7 @@ void app_main(void) {
         // Test message to send
         const char *test_msg = "Hello, Bitbang!\n";
         int len = strlen(test_msg);
-        //ESP_LOG(TAG, "Sending: %s", test_msg);
+        ESP_LOGI(TAG, "Sending: %s", test_msg);
 
         // Transmit each character
         for (int i = 0; i < len; i++) {
@@ -101,10 +99,9 @@ void app_main(void) {
         }
 
         received[idx] = '\0';  // Null-terminate the string
-        //ESP_LOG(TAG, "Received: %s", received);
+        ESP_LOGI(TAG, "Received: %s", received);
 
         // Delay before the next transmission
-       // vTaskDelay(2000 / portTICK_PERIOD_MS);
-
+       vTaskDelay(2000 / portTICK_PERIOD_MS);
     }
   }
