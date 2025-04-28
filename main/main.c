@@ -19,12 +19,11 @@ void bitbang_uart_tx(uint8_t byte) {
     gpio_set_direction(TX_PIN, GPIO_MODE_OUTPUT);
     // Start bit (low)
     gpio_set_level(TX_PIN, 0);
-    //ets_ delay_  us(BIT_TIME_US);
+    esp_rom_delay_us(BIT_TIME_US);
 
     // Send 8 data bits, LSB first
     for (int i = 0; i < 8; i++) {
         gpio_set_level(TX_PIN, (byte >> i) & 0x01);
-        //ets_delay_us(BIT_TIME_US);
         esp_rom_delay_us(BIT_TIME_US);
     }
 
